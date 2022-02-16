@@ -1,0 +1,41 @@
+import java.security.*;
+import javax.crypto.*;
+import java.util.Base64;
+
+
+public class myrsa {
+
+    private static final int KEY_SIZE = 512;
+
+public static void main(String[] args) {
+
+    KeyPair pair;
+    try{
+        KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+        SecureRandom random = new SecureRandom();
+        gen.initialize(KEY_SIZE,random);
+        pair = gen.generateKeyPair();
+
+        final Cipher cipher = Cipher.getInstance("RSA");
+        final String plaintext = "THIS IS A SAMPLE MESSAGE";
+        System.out.println("original message : " + plaintext);
+
+        cipher.init(Cipher.ENCRYPT_MODE, pair.getPublic());
+        byte[] encryptedString = cipher.doFinal(plaintext.getBytes());
+        String cipherText = new String(Base64.getEncoder().encode(encryptedString));
+        System.out.println("Encrypted CipherText: " + cipherText);
+
+        cipher.init(Cipher.DECRYPT_MODE, pair.getPrivate());
+        byte[] cipherTextBytes = Base64.getDecoder().decode(cipherText.getBytes());
+        byte[] decryptedBytes = cipher.doFinal(cipherTextBytes);
+        String decrypted = new String(decryptedBytes);
+        System.out.println("decrypted string is : " + decrypted);
+    }
+    catch(Exception e) 
+    {
+        System.out.print(e);
+    }
+  
+}
+    
+}
